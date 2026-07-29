@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>PubMed Pharma Extractor</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 30px; background-color: #f8f9fa; }
+        h1 { color: #184c78; }
+        input[type="text"] { width: 60%; padding: 10px; font-size: 16px; }
+        button { padding: 10px 15px; font-size: 16px; cursor: pointer; background-color: #184c78; color: white; border: none; }
+        table { width: 100%; border-collapse: collapse; margin-top: 20px; background: white; }
+        th, td { border: 1px solid #ddd; padding: 10px; text-align: left; }
+        th { background-color: #f1f1f1; }
+        a { color: #0066cc; text-decoration: none; }
+        a:hover { text-decoration: underline; }
+    </style>
+</head>
+<body>
+    <h1>🧬 PubMed Pharma Paper Extractor</h1>
+    <form method="POST" action="/">
+        <input type="text" name="query" value="{{ query }}" placeholder="Enter query (e.g., oncology, mRNA)..." required>
+        <button type="submit">Search & Filter</button>
+    </form>
+
+    {% if query %}
+        <form method="POST" action="/export" style="margin-top: 15px;">
+            <input type="hidden" name="query" value="{{ query }}">
+            <button type="submit" style="background-color: #28a745;">📥 Export to CSV</button>
+        </form>
+    {% endif %}
+
+    {% if papers %}
+        <table>
+            <thead>
+                <tr>
+                    <th>PMID</th>
+                    <th>Title</th>
+                    <th>Pub Date</th>
+                    <th>Non-Academic Authors</th>
+                    <th>Company Affiliations</th>
+                    <th>Paper Link</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for paper in papers %}
+                <tr>
+                    <td>{{ paper.pubmed_id }}</td>
+                    <td>{{ paper.title }}</td>
+                    <td>{{ paper.pub_date }}</td>
+                    <td>{{ paper.non_academic_authors }}</td>
+                    <td>{{ paper.company_affiliations }}</td>
+                    <td><a href="{{ paper.paper_url }}" target="_blank">View Paper 🔗</a></td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% elif query %}
+        <p>No papers with pharma/biotech affiliations found for this query.</p>
+    {% endif %}
+</body>
+</html>
